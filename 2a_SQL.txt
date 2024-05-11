@@ -1,0 +1,221 @@
+>mysql -h 192.168.2.232 -u TEB65 -p
+mysql> create database CollegeTEB2022;
+
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use CollegeTEB2022;
+
+Database changed
+
+mysql> create table Customers(Account_no int primary key AUTO_INCREMENT,Name varchar(20) 
+NOT NULL,Balance int, City varchar(10));
+
+Query OK, 0 rows affected (0.40 sec)
+
+mysql> Desc Customers;
++---------------+----------------+---------+--------+------------+---------------------+
+| Field | Type | Null | Key | Default | Extra |
++---------------+--------------- -+--------+--------+-----------+----------------------+
+| Account_no | int(11) | NO | PRI | NULL | auto_increment |
+| Name | varchar(20) | NO | | NULL | |
+| Balance | int(11) | YES | | NULL | |
+| City | varchar(10) | YES | | NULL | |
++---------------+-----------------+--------+-------+------------+----------------------+
+
+
+
+mysql> insert into Customers(Name,Balance,City) values ('Ram',10000,'Pune');
+
+Query OK, 1 row affected (0.04 sec)
+
+mysql>
+
+mysql> insert into Customers(Name,Balance,City) 
+values('Ravi',25000,'Nashik'),('Sachin',30000,'Mumbai');
+
+Query OK, 2 rows affected (0.05 sec)
+Records: 2 Duplicates: 0 Warnings: 0
+
+mysql> select * from Customers;
+
++---------------+---------+-----------+-----------+
+| Account_no | Name | Balance | City |
++---------------+---------+------ ----+-----------+
+| 1 | Ram | 10000 | Pune |
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++---------------+---------+----------+------------+
+3 rows in set (0.00 sec)
+III. Set Operation: Union, Intersection, Minus
+Create following table
+Table Name : Loan
+Table Column Name : Loan_no, Name, Loan_Amount
+Insert Following Record
+1 Ram 10000
+2 Ravi 50000
+4 Dipak 40000
+
+mysql> create table Loan(Loan_no int primary key AUTO_INCREMENT,Name varchar(20) NOT 
+NULL,Loan_amount int);
+
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> insert into Customers(Name,Balance,City) values('Ravi',25000,'Nashik'),('Sachin',30000,'Mumbai');
+
+mysql> insert into Loan(Name,Loan_amount)values('Ram',10000),('Ravi',50000),('Dipak',40000);
+
+Query OK, 3 rows affected (0.05 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+
+mysql> select * from Loan;
+
++-----------+---------+-------------------+
+| Loan_no | Name | Loan_amount |
++-----------+---------+-------------------+
+| 1 | Ram | 10000 |
+| 2 | Ravi | 50000 |
+| 3 | Dipak | 40000 |
++-----------+---------+--------------------+
+3 rows in set (0.00 sec)
+1) Select customer having account in the bank or teken the loan from the bank
+
+mysql> select name from Customers union select name from Loan;
+
++----------+
+| name |
++----------+
+| Ram |
+| Ravi |
+| Sachin |
+| Dipak |
++----------+
+2) Select customer having account as well as loan in the bank
+
+mysql> select Name from Customers where Name in (select Name from Loan);
+
++--------+
+| Name |
++--------+
+| Ram |
+| Ravi |
++--------+
+3) Select customer having account in the bank but not taken the loan
+
+mysql> select Name from Customers where Name not in (select Name from Loan);
+
++---------+
+| Name |
++---------+
+| Sachin |
++---------+
+IV. 1) Create a view to display customer having balance greater than 20000
+
+mysql> create view Customer_Above_20000 as select * from Customers where Balance>= 20000;
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from Customer_Above_20000;
+
++----------------+---------+----------- +------------+
+| Account_no | Name | Balance | City |
++----------------+---------+---------- -+------------+
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++----------------+---------+------------+------------+
+2) Create a view to display customer from nasik having Balance greater than 20000
+
+mysql> create view Customer_Nashik as select * from Customers where Balance>= 20000 and 
+City='Nashik';
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from Customer_Nashik;
+
++---------------+--------+-----------+----------+
+| Account_no | Name | Balance | City |
++---------------+--------+-----------+----------+
+| 2 | Ravi | 25000 | Nashik |
++---------------+--------+-----------+----------+
+V. 1) Create a index on name column
+
+mysql> create index name_index on Customers(Name);
+
+Query OK, 0 rows affected (0.27 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+
+mysql> show Index from Customers;
+
++--------------+----------------+----------------+-----------------+-------------------+------------+-----------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality |
++--------------+------------- -+----------------+-----------------+------------------+-------------+-----------------+
+| Customers | 0 | PRIMARY | 1 | Account_no | A | 3 | 
+| Customers | 1 | name_index | 1 | Name | A | 3 | 
++---------------+---------------+----------------+-----------------+-------------------+------------+-----------------+
++-------------+-----------+-------+---------------+-------------+---------------------+
+| Sub Part | Packed | Null | Index_type | Comment | Index_comment |
++------------ +-----------+-------+---------------+-------------+----------------------+
+| NULL | NULL | | BTREE | | |
+| NULL | NULL | | BTREE | | |
++------------+------------+-------+--------------+--------------+---------------------+
+2) Create a composite index on Account_no and name column
+
+mysql> create index index1 on Customers(Account_no, Name);
+
+Query OK, 0 rows affected (0.25 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+
+mysql> show index from Customers;
+
++--------------+----------------+----------------+-----------------+-------------------+------------+----------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | 
++--------------+----------------+----------------+-----------------+-------------------+------------+----------------+
+| Customers | 0 | PRIMARY | 1 | Account_no | A | 3 | 
+| Customers | 1 | name_index | 1 | Name | A | 3 | 
+| Customers | 1 | myindex | 1 | Name | A | 3 | 
+| Customers | 1 | index1 | 1 | Account_no | A | 3 | 
+| Customers | 1 | index1 | 2 | Name | A | 3 | 
++--------------+----------------+----------------+-----------------+-------------------+------------+----------------+
++-------------+-----------+-------+---------------+-------------+---------------------+
+| Sub Part | Packed | Null | Index_type | Comment | Index_comment |
++------------ +-----------+-------+---------------+-------------+----------------------+
+| NULL | NULL | | BTREE | | |
+| NULL | NULL | | BTREE | | |
+| NULL | NULL | | BTREE | | |
+| NULL | NULL | | BTREE | | |
+| NULL | NULL | | BTREE | | |
++------------+------------+-------+--------------+--------------+---------------------+
+VI. 1) Display Customer in the ascending order of Balance
+
+mysql> select * from Customers order by Balance asc;
+
++---------------+---------+-----------+-----------+
+| Account_no | Name | Balance | City |
++---------------+---------+-----------+-----------+
+| 1 | Ram | 10000 | Pune |
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++--------------+----------+-----------+------------+
+3 rows in set (0.00 sec)
+2) Display borower in the descending order of loan_amount
+
+mysql> select * from Loan order by Loan_amount desc;
+
++-----------+---------+------------------+
+| Loan_no | Name | Loan_amount |
++-----------+---------+------------------+
+| 2 | Ravi | 50000 |
+| 3 | Dipak | 40000 |
+| 1 | Ram | 10000 |
++---------- +---------+------------------+
+3 rows in set (0.00 sec)
+VII. Calculate and display interest on given loan for 20 year (Use Synonym)
+
+mysql> Select Name,Loan_Amount,Loan_Amount*0.04*20 as InterestAfter20Yrs from Loan;
+
++---------+-------------------+-------------------------+
+| Name | Loan_Amount | InterestAfter20Yrs |
++---------+-------------------+-------------------------+
+| Ram | 10000 | 8000.00 |
+| Ravi | 50000 | 40000.00 |
+| Dipak | 40000 | 32000.00 |
++---------+------------------+--------------------------

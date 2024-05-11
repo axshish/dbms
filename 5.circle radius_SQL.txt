@@ -1,0 +1,48 @@
+mysql> CREATE DATABASE Circle;
+Query OK, 1 row affected (0.01 sec)
+mysql> USE Circle;
+Database changed
+mysql> CREATE TABLE area(radius INT,area FLOAT);
+Query OK, 0 rows affected (0.01 sec)
+mysql> DESC area;
++--------+-------+------+-----+---------+---------+
+| Field | Type | Null | Key | Default | Extra |
++--------+-------+------+-----+---------+---------+
+| radius | int | YES | | NULL | |
+| area | float | YES | | NULL | |
++---------+-------+------+-----+---------+--------+
+2 rows in set (0.00 sec)
+mysql> SELECT * FROM area;
+Empty set (0.00 sec)
+*************************************************************************************
+*******************************Defining Procedure************************************
+mysql> drop procedure if exists Find_Circle_Area;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE Find_Circle_Area()
+BEGIN
+    DECLARE r INT;
+    DECLARE a FLOAT;
+    SET r = 5;
+    
+    loop_label: LOOP
+        IF r > 9 THEN
+            LEAVE loop_label;
+        END IF;
+        
+        SET a = 3.14 * r * r;
+        INSERT INTO area (radius, area) VALUES (r, a);
+        SET r = r + 1;
+    END LOOP;
+
+END//
+
+DELIMITER ;
+
+mysql> call Find_Circle_Area();
+Query OK, 1 row affected (0.01 sec)
+mysql> SELECT * FROM area;

@@ -1,0 +1,105 @@
+mysql> CREATE DATABASE Library;
+Query OK, 1 row affected (0.01 sec)
+mysql> USE Library;
+Database changed
+mysql> CREATE TABLE lib_book(bid INT,bname VARCHAR(20),qty INT);
+Query OK, 0 rows affected (0.02 sec)
+mysql> CREATE TABLE lib_audit(bid INT,bname VARCHAR(20),qty INT);
+Query OK, 0 rows affected (0.01 sec)
+mysql> INSERT INTO lib_book VALUES(1,"Secret",10),(2,"Hating game",30),(3,"The 
+Alchemist",50),(4,"Love Hypothesis",45);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4 Duplicates: 0 Warnings: 0
+mysql> SELECT * FROM lib_book;
++------+---------------------+------+
+| bid | bname | qty |
++------+---------------------+------+
+| 1 | Secret | 10 |
+| 2 | Hating game | 30 |
+| 3 | The Alchemist | 50 |
+| 4 | Love Hypothesis | 45 |
++------+----------------------+------+
+4 rows in set (0.00 sec)
+mysql> SELECT * FROM lib_audit;
+Empty set (0.00 sec)
+***********************************************************
+mysql>drop trigger if exists Make_audit1;
+Query OK,0 rows affected,1 warning(0.00 sec)
+
+mysql>
+mysql>DELIMITER //
+
+CREATE TRIGGER Make_audit1
+AFTER DELETE ON lib_book
+FOR EACH ROW
+BEGIN
+    INSERT INTO lib_Audit (bid, bname, qty)
+    VALUES (OLD.bid, OLD.bname, OLD.qty);
+END;
+//
+
+DELIMITER ;
+
+*************************************************************************************
+
+mysql> DELETE FROM lib_book where bid=4 or bid=2;
+Query OK, 2 rows affected (0.01 sec)
+mysql> SELECT * FROM lib_book;
++------+------------------+------+
+| bid | bname | qty |
++------+------------------+------+
+| 1 | Secret | 10 |
+| 3 | The Alchemist | 50 |
++------+-------------------+------+
+2 rows in set (0.00 sec)
+mysql> SELECT * FROM lib_audit;
++------+-------------------+------+
+| bid | bname | qty |
++------+-------------------+------+
+| 2 | Hating game | 30 |
+| 4 | Love Hypothesis | 45 |
++------+--------------------+------+
+2 rows in set (0.00 sec)
+
+
+*******************************Defining Trigger**************************************
+mysql> drop trigger if exists Make_audit2;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+mysql>
+mysql> DELIMITER //
+
+CREATE TRIGGER Make_audit2
+AFTER UPDATE ON lib_book
+FOR EACH ROW
+BEGIN
+    INSERT INTO lib_Audit (bid, bname, qty)
+    VALUES (OLD.bid, OLD.bname, OLD.qty);
+END;
+//
+
+DELIMITER ;
+
+Query OK, 0 rows affected (0.00 sec)
+
+*************************************************************************************
+***************************Updating Record to trigger action**************************
+
+mysql> UPDATE lib_book set qty=100 where bname="Secret";
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> SELECT * FROM lib_book;
++------+------------------+-------+
+| bid | bname | qty |
++------+------------------+-------+
+| 1 | Secret | 100 |
+| 3 | The Alchemist | 50 |
++------+-------------------+------+
+2 rows in set (0.00 sec)
+mysql> SELECT * FROM lib_audit;
++------+----------------------+------+
+| bid | bname | qty |
++------+----------------------+------+
+| 2 | Hating game | 30 |
+| 4 | Love Hypothesis | 45 |
+| 1 | Secret | 10 |
++------+----------------------+------+
