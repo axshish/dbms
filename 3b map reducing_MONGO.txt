@@ -1,0 +1,85 @@
+gescoe@gescoe-OptiPlex-3010:~$ mongo
+MongoDB shell version: 3.0.15
+connecting to: test
+test> use Library
+Library> db.books.insert([{bid:1,bname:"The Alchemist",author:"Paulo 
+Coelho",price:200,status:"A"},{bid:2,bname:"The Secret",author:"Rhonda 
+Byrne",price:300,status:"A"},{bid:3,bname:"Eleven Minutes",author:"Paulo 
+Coelho",price:180,status:"A"},{bid:4,bname:"The Magic",author:"Rhonda 
+Byrne",price:320,status:"NA"},{bid:5,bname:"Hero",author:"Rhonda 
+Byrne",price:400,status:"A"},{bid:6,bname:"YOU CAN",author:"George Matthew 
+Adams",price:100,status:"A"}]);
+{
+ acknowledged: true,
+ insertedIds: {
+ '0': ObjectId("636a23e3c4855854011f1ec9"),
+ '1': ObjectId("636a23e3c4855854011f1eca"),
+ '2': ObjectId("636a23e3c4855854011f1ecb"),
+ '3': ObjectId("636a23e3c4855854011f1ecc"),
+ '4': ObjectId("636a23e3c4855854011f1ecd"),
+ '5': ObjectId("636a23e3c4855854011f1ece")
+ }
+}
+Library> db.books.find().pretty();
+[
+ {
+ _id: ObjectId("636a23e3c4855854011f1ec9"),
+ bid: 1,
+ bname: 'The Alchemist',
+ author: 'Paulo Coelho',
+ price: 200,
+ status: 'A'
+ },
+ {
+ _id: ObjectId("636a23e3c4855854011f1eca"),
+ bid: 2,
+ bname: 'The Secret',
+ author: 'Rhonda Byrne',
+ price: 300,
+ status: 'A'
+ },
+ {
+ _id: ObjectId("636a23e3c4855854011f1ecb"),
+ bid: 3,
+ bname: 'Eleven Minutes',
+ author: 'Paulo Coelho',
+ price: 180,
+ status: 'A'
+ },
+ {
+ _id: ObjectId("636a23e3c4855854011f1ecc"),
+ bid: 4,
+ bname: 'The Magic',
+ author: 'Rhonda Byrne',
+ price: 320,
+ status: 'NA'
+ },
+ {
+ _id: ObjectId("636a23e3c4855854011f1ecd"),
+ bid: 5,
+ bname: 'Hero',
+ author: 'Rhonda Byrne',
+ price: 400,
+ status: 'A'
+ },
+ {
+ _id: ObjectId("636a23e3c4855854011f1ece"),
+ bid: 6,
+ bname: 'YOU CAN',
+ author: 'George Matthew Adams',
+ price: 100,
+ status: 'A'
+ }
+]
+***********************************Map Reduce****************************************
+Library> db.books.mapReduce(function(){emit(this.author,this.price);},function(author,prices){return 
+Array.sum(prices);},{query:{status:"A"},out:"AuthorTotalPrices"});
+{ result: 'AuthorTotalPrices', ok: 1 }
+Library> db.AuthorTotalPrices.find().pretty();
+[
+ { _id: 'Paulo Coelho', value: 380 },
+ { _id: 'Rhonda Byrne', value: 700 },
+ { _id: 'George Matthew Adams', value: 100 }
+]
+Library>
+************************************************************************************

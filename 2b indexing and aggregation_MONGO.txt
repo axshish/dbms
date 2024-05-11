@@ -1,0 +1,246 @@
+gescoe@gescoe-OptiPlex-3010:~$ mongo
+MongoDB shell version: 3.0.15
+connecting to: test
+test> use EmpployeeDB
+switched to db EmpployeeDB
+EmpplyeeDB> 
+db.employee.insert({_id:1,name:"steve",age:23,role:"Manager",project:"Nirvana",salary:40000});
+{ acknowledged: true, insertedIds: { '0': 1 } }
+EmpplyeeDB> 
+db.employee.insert({_id:2,name:"Tony",age:28,role:"Developer",project:"Alexa",salary:35000,tech: [ 
+'Java', 'Hibernate' ]});
+{ acknowledged: true, insertedIds: { '0': 2 } }
+EmpplyeeDB> 
+db.employee.insert({_id:3,name:"Natasha",age:30,role:"Designer",project:"Nirvana",salary:32000,tech: 
+[ 'React', 'Bootstrap' ]});
+{ acknowledged: true, insertedIds: { '0': 3 } }
+EmpplyeeDB> db.employee.insert({_id:4,name:"Groot",age:21,role:"Sales Manager",project:"Cortana",salary:28000});
+{ acknowledged: true, insertedIds: { '0': 4 } }
+EmpplyeeDB> db.employee.insert({_id:5,name:"Bruce",age:32,role:"Marketing Manager",project:"Amazon Echo",salary:38000});
+{ acknowledged: true, insertedIds: { '0': 5 } }
+EmpplyeeDB> 
+db.employee.insert({_id:6,name:"Peter",age:20,role:"Designer",project:"Alexa",salary:25000});
+{ acknowledged: true, insertedIds: { '0': 6 } }
+EmpplyeeDB> 
+db.employee.insert({_id:7,name:"MJ",age:20,role:"Developer",project:"Siri",salary:29000});
+{ acknowledged: true, insertedIds: { '0': 7 } }
+EmpplyeeDB> db.employee.find().pretty()
+[
+ {
+ _id: 1,
+ name: 'steve',
+ age: 23,
+ role: 'Manager',
+ project: 'Nirvana',
+ salary: 40000
+ },
+ {
+ _id: 2,
+ name: 'Tony',
+ age: 28,
+ role: 'Developer',
+ project: 'Alexa',
+ salary: 35000,
+ tech: [ 'Java', 'Hibernate' ]
+ },
+ {
+ _id: 3,
+ name: 'Natasha',
+ age: 30,
+ role: 'Designer',
+ project: 'Nirvana',
+ salary: 32000,
+ tech: [ 'React', 'Bootstrap' ]
+ },
+ {
+ _id: 4,
+ name: 'Groot',
+ age: 21,
+ role: 'Sales Manager',
+ project: 'Cortana',
+ salary: 28000
+ },
+ {
+ _id: 5,
+ name: 'Bruce',
+ age: 32,
+ role: 'Marketing Managar',
+ project: 'Amazon Echo',
+ salary: 38000
+ },
+ {
+ _id: 6,
+ name: 'Peter',
+ age: 20,
+ role: 'Designer',
+ project: 'Alexa',
+ salary: 25000
+ },
+ {
+ _id: 7,
+ name: 'MJ',
+ age: 20,
+ role: 'Developer',
+ project: 'Siri',
+ salary: 29000
+ }
+]
+*********************************Aggregation*****************************************
+EmpplyeeDB> db.employee.aggregate([{$match:{project:"Alexa"}},{$count:"People Working on Project:Alexa"}])
+[ { 'People Working on Project:Alexa': 2 } ]
+EmpplyeeDB> 
+db.employee.aggregate([{$group:{_id:"$role",totalPayment:{$sum:1},min_age:{$min:"$age"}}}])
+[
+ { _id: 'Marketing Managar', totalPayment: 1, min_age: 32 },
+ { _id: 'Sales Manager', totalPayment: 1, min_age: 21 },
+ { _id: 'Developer', totalPayment: 2, min_age: 20 },
+ { _id: 'Manager', totalPayment: 1, min_age: 23 },
+ { _id: 'Designer', totalPayment: 2, min_age: 20 }
+]
+EmpplyeeDB> 
+db.employee.aggregate([{$group:{_id:"$role",totalPayment:{$sum:1},max_age:{$max:"$age"}}}])
+[
+ { _id: 'Sales Manager', totalPayment: 1, max_age: 21 },
+ { _id: 'Marketing Managar', totalPayment: 1, max_age: 32 },
+ { _id: 'Manager', totalPayment: 1, max_age: 23 },
+ { _id: 'Developer', totalPayment: 2, max_age: 28 },
+ { _id: 'Designer', totalPayment: 2, max_age: 30 }
+EmpplyeeDB> db.employee.aggregate([{$group:{_id:"$role",avg_Salary:{$avg:"$salary"}}}])
+[
+ { _id: 'Sales Manager', avg_Salary: 28000 },
+ { _id: 'Marketing Managar', avg_Salary: 38000 },
+{ _id: 'Manager', avg_Salary: 40000 },
+ { _id: 'Developer', avg_Salary: 32000 },
+ { _id: 'Designer', avg_Salary: 28500 }
+]
+EmpplyeeDB> db.employee.aggregate([{$match:{age:{$gt:30}}}])
+[
+ {
+ _id: 5,
+ name: 'Bruce',
+ age: 32,
+ role: 'Marketing Managar',
+ project: 'Amazon Echo',
+ salary: 38000
+ }
+]
+EmpplyeeDB> db.employee.aggregate([{$sort:{name:1}}])
+[
+ {
+ _id: 5,
+ name: 'Bruce',
+ age: 32,
+ role: 'Marketing Managar',
+ project: 'Amazon Echo',
+ salary: 38000
+ },
+ {
+ _id: 4,
+ name: 'Groot',
+ age: 21,
+ role: 'Sales Manager',
+ project: 'Cortana',
+ salary: 28000
+ },
+ {
+ _id: 7,
+ name: 'MJ',
+ age: 20,
+ role: 'Developer',
+ project: 'Siri',
+ salary: 29000
+ },
+ {
+ _id: 3,
+ name: 'Natasha',
+ age: 30,
+ role: 'Designer',
+ project: 'Nirvana',
+ salary: 32000,
+ tech: [ 'React', 'Bootstrap' ]
+ },
+ {
+ _id: 6,
+ name: 'Peter',
+ age: 20,
+ role: 'Designer',
+ project: 'Alexa',
+ salary: 25000
+ },
+ {
+ _id: 2,
+ name: 'Tony',
+ age: 28,
+ role: 'Developer',
+ project: 'Alexa',
+ salary: 35000,
+ tech: [ 'Java', 'Hibernate' ]
+ },
+ {
+ _id: 1,
+ name: 'steve',
+ age: 23,
+ role: 'Manager',
+ project: 'Nirvana',
+ salary: 40000
+ }
+]
+EmpplyeeDB> db.employee.aggregate([{$unwind:"$tech"}])
+[
+ {
+ _id: 2,
+ name: 'Tony',
+ age: 28,
+ role: 'Developer',
+ project: 'Alexa',
+ salary: 35000,
+ tech: 'Java'
+ },
+ {
+ _id: 2,
+ name: 'Tony',
+ age: 28,
+ role: 'Developer',
+ project: 'Alexa',
+ salary: 35000,
+ tech: 'Hibernate'
+ },
+ {
+ _id: 3,
+ name: 'Natasha',
+ age: 30,
+ role: 'Designer',
+ project: 'Nirvana',
+ salary: 32000,
+ tech: 'React'
+ },
+ {
+ _id: 3,
+ name: 'Natasha',
+ age: 30,
+ role: 'Designer',
+ project: 'Nirvana',
+ salary: 32000,
+ tech: 'Bootstrap'
+ }
+]
+*************************************************************************************
+**********************************Indexing*******************************************
+EmpplyeeDB> db.employee.createIndex({"age":1})
+age_1
+EmpplyeeDB> db.employee.createIndex({"age":1,"salary":1})
+age_1_salary_1
+EmpplyeeDB> db.employee.getIndexes()
+[
+ { v: 2, key: { _id: 1 }, name: '_id_' },
+ { v: 2, key: { age: 1 }, name: 'age_1' },
+ { v: 2, key: { age: 1, salary: 1 }, name: 'age_1_salary_1' }
+]
+EmpplyeeDB> db.employee.dropIndex({"age":1})
+{ nIndexesWas: 3, ok: 1 }
+EmpplyeeDB> db.employee.dropIndex({"age":1,"salary":1})
+{ nIndexesWas: 2, ok: 1 }
+EmpplyeeDB> db.employee.getIndexes()
+[ { v: 2, key: { _id: 1 }, name: '_id_' } ]
+EmpplyeeDB>
+**************************************************************************************************

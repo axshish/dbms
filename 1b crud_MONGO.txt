@@ -1,0 +1,140 @@
+gescoe@gescoe-OptiPlex-3010:~$ mongo
+MongoDB shell version: 3.0.15
+connecting to: test
+********************************Create Collection************************************
+> db.createCollection("Student1");
+{ "ok" : 1 }
+********************************Insert a document************************************
+> db.Student1.insert({RollNo:1,Name:"Mansi"});
+WriteResult({ "nInserted" : 1 })
+> db.Student1.insert({RollNo:2,Name:"Ruchita",Class:"Computer"});
+WriteResult({ "nInserted" : 1 })
+> db.Student1.insert([{RollNo:3,Name:"Kaveri"},{RollNo:4,Name:"Pooja"}]);
+BulkWriteResult({
+"writeErrors" : [ ],
+"writeConcernErrors" : [ ],
+"nInserted" : 2,
+"nUpserted" : 0,
+"nMatched" : 0,
+"nModified" : 0,
+"nRemoved" : 0,
+"upserted" : [ ]
+})
+***************************************Find*****************************************
+> db.Student1.find();
+{ "_id" : ObjectId("6364af81b524bd71079730a7"), "RollNo" : 1, "Name" : "Mansi" }
+{ "_id" : ObjectId("6364afa8b524bd71079730a8"), "RollNo" : 2, "Name" : "Ruchita", "Class" : 
+"Computer"}
+{ "_id" : ObjectId("6364afe2b524bd71079730a9"), "RollNo" : 3, "Name" : "Kaveri" }
+{ "_id" : ObjectId("6364afe2b524bd71079730aa"), "RollNo" : 4, "Name" : "Pooja" }
+************************************Find Pretty**************************************
+> db.Student1.find().pretty();
+{
+"_id" : ObjectId("6364af81b524bd71079730a7"),
+"RollNo" : 1,
+"Name" : "Mansi"
+}
+{
+"_id" : ObjectId("6364afa8b524bd71079730a8"),
+"RollNo" : 2,
+"Name" : "Ruchita",
+"Class" : "Computer"
+}
+{
+"_id" : ObjectId("6364afe2b524bd71079730a9"),
+"RollNo" : 3,
+"Name" : "Kaveri"
+}
+{
+"_id" : ObjectId("6364afe2b524bd71079730aa"),
+"RollNo" : 4,
+"Name" : "Pooja"
+}
+*******************************Update Document***************************************
+> db.Student1.update({RollNo:2},{$set:{class:"TE",Name:"Ruchita"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+>db.Student1.find();
+[
+ {
+ _id: ObjectId("6370ca7482b424fd47641186"),
+ RollNo: 1,
+ Name: 'Mansi'
+ },
+ {
+ _id: ObjectId("6370ca7f82b424fd47641187"),
+ RollNo: 2,
+ Name: 'Ruchita',
+ Class: 'Computer',
+ class: 'TE'
+ },
+ {
+ _id: ObjectId("6370ca8d82b424fd47641188"),
+ RollNo: 3,
+ Name: 'Kaveri'
+ },
+ {
+ _id: ObjectId("6370ca8d82b424fd47641189"),
+ RollNo: 4,
+ Name: 'Pooja'
+ }
+]
+******************************Remove Document****************************************
+> db.Student1.remove({RollNo:4});
+WriteResult({ "nRemoved" : 1 })
+> db.Student1.find().pretty();
+{
+"_id" : ObjectId("6364af81b524bd71079730a7"),
+"RollNo" : 1,
+"Name" : "Mansi"
+}
+{
+"_id" : ObjectId("6364afa8b524bd71079730a8"),
+"RollNo" : 2,
+"Name" : "Ruchita",
+"Class" : "Computer"
+}
+{
+"_id" : ObjectId("6364afe2b524bd71079730a9"),
+"RollNo" : 3,
+"Name" : "Kaveri"
+}
+********************************SAVE method******************************************
+> db.Student1.save({RollNo:5,Name:"Damini",Class:"Computer"});
+WriteResult({
+"nMatched" : 0,
+"nUpserted" : 1,
+"nModified" : 0,
+"_id" : ObjectId("6364afe2b524bd71079730ab")
+})
+db.Student1.find().pretty();
+{
+"_id" : ObjectId("6364af81b524bd71079730ab"),
+"RollNo" : 5,
+"Name" : "Damini"
+"Class" : "Computer"
+}
+{
+"_id" : ObjectId("6364af81b524bd71079730a7"),
+"RollNo" : 1,
+"Name" : "Mansi"
+}
+{
+"_id" : ObjectId("6364afa8b524bd71079730a8"),
+"RollNo" : 2,
+"Name" : "Ruchita",
+"Class" : "Computer"
+}
+{
+"_id" : ObjectId("6364afe2b524bd71079730a9"),
+"RollNo" : 3,
+"Name" : "Kaveri"
+}
+*********************************Logical operator************************************
+> db.Student1.find({$and: [{RollNo:5},{Class: "Computer"}]}).pretty()
+{
+"_id" : ObjectId("6364af81b524bd71079730ab"),
+"RollNo" : 5,
+"Name" : "Damini"
+"Class" : "Computer"
+}
+*************************************************************************************
